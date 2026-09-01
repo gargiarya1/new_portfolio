@@ -2,11 +2,17 @@ import { NextResponse } from "next/server";
 import nodemailer from "nodemailer";
 import { profile } from "@/data/portfolio";
 
-// Required env vars (set in .env.local for dev, and in your host's
+// Required env var (set in .env.local for dev, and in your host's
 // environment variable dashboard for production):
-//   GMAIL_USER          — the Gmail address that sends the mail (e.g. gargi.arya67@gmail.com)
-//   GMAIL_APP_PASSWORD  — a 16-character App Password for that account
-//                          (Google Account → Security → 2-Step Verification → App passwords)
+//   GMAIL_APP_PASSWORD — a 16-character App Password for profile.email's Gmail account
+//                        (Google Account → Security → 2-Step Verification → App passwords)
+//
+// The sending address itself is profile.email — it's already public
+// everywhere on the site (Contact section, footer, mailto links), so there's
+// no need to duplicate it as a "secret" env var. Netlify (and similar hosts)
+// scan deploy env vars against build output and fail the build if a var's
+// value shows up anywhere — which it always would here, since the address
+// is meant to be public.
 
 function escapeHtml(value: string) {
   return value
@@ -41,11 +47,11 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: "Please enter a valid email address." }, { status: 400 });
   }
 
-  const user = process.env.GMAIL_USER;
+  const user = profile.email;
   const pass = process.env.GMAIL_APP_PASSWORD;
 
-  if (!user || !pass) {
-    console.error("Contact form: GMAIL_USER / GMAIL_APP_PASSWORD are not configured.");
+  if (!pass) {
+    console.error("Contact form: GMAIL_APP_PASSWORD is not configured.");
     return NextResponse.json(
       { error: "The contact form isn't configured yet. Please email directly instead." },
       { status: 500 }
