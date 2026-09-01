@@ -1,7 +1,14 @@
 import type { Metadata } from "next";
 import { Fraunces, Plus_Jakarta_Sans } from "next/font/google";
-import { ThemeProvider } from "@/lib/theme-provider";
 import { profile } from "@/data/portfolio";
+import { BackgroundFX } from "@/components/three/BackgroundFX";
+import { ResumeModalProvider } from "@/lib/resume-modal-context";
+import { ResumeModal } from "@/components/ResumeModal";
+import { ThemeAccentProvider } from "@/lib/theme-accent-context";
+import { ThemePicker } from "@/components/ThemePicker";
+import { ChatbotProvider } from "@/lib/chatbot-context";
+import { ChatbotLauncher } from "@/components/chatbot/ChatbotLauncher";
+import { ChatbotModal } from "@/components/chatbot/ChatbotModal";
 import "./globals.css";
 
 const fraunces = Fraunces({
@@ -46,18 +53,21 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      suppressHydrationWarning
-      className={`${fraunces.variable} ${jakarta.variable} h-full antialiased`}
+      className={`${fraunces.variable} ${jakarta.variable} h-full antialiased dark`}
     >
       <body className="min-h-full flex flex-col bg-base text-ink font-sans overflow-x-hidden">
-        <ThemeProvider
-          attribute="data-theme"
-          defaultTheme="light"
-          enableSystem={false}
-          disableTransitionOnChange
-        >
-          {children}
-        </ThemeProvider>
+        <ThemeAccentProvider>
+          <ResumeModalProvider>
+            <ChatbotProvider>
+              <BackgroundFX />
+              {children}
+              <ResumeModal />
+              <ThemePicker />
+              <ChatbotLauncher />
+              <ChatbotModal />
+            </ChatbotProvider>
+          </ResumeModalProvider>
+        </ThemeAccentProvider>
       </body>
     </html>
   );

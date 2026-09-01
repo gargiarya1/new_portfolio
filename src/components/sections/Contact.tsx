@@ -2,11 +2,12 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { Mail, Phone, MapPin, Send, CheckCircle2 } from "lucide-react";
+import { Mail, Phone, MapPin, Send, CheckCircle2, AlertCircle, Loader2, MessageCircle } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/ui/Reveal";
 import { GithubIcon, LinkedinIcon } from "@/components/ui/icons";
+import { useChatbot } from "@/lib/chatbot-context";
 
 const contactCards = [
   { icon: Mail, label: "Email", value: profile.email, href: `mailto:${profile.email}` },
@@ -19,19 +20,38 @@ const socialLinks = [
   { icon: LinkedinIcon, label: "LinkedIn", href: profile.linkedin },
 ];
 
-export function Contact() {
-  const [form, setForm] = useState({ name: "", email: "", message: "" });
-  const [sent, setSent] = useState(false);
+type Status = "idle" | "sending" | "sent" | "error";
 
-  const handleSubmit = (e: React.FormEvent) => {
+export function Contact() {
+  const { open: openChat } = useChatbot();
+  const [form, setForm] = useState({ name: "", email: "", message: "" });
+  const [status, setStatus] = useState<Status>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const subject = encodeURIComponent(`Portfolio inquiry from ${form.name || "a visitor"}`);
-    const body = encodeURIComponent(
-      `${form.message}\n\n— ${form.name}\n${form.email}`
-    );
-    window.location.href = `mailto:${profile.email}?subject=${subject}&body=${body}`;
-    setSent(true);
-    setTimeout(() => setSent(false), 3500);
+    setStatus("sending");
+    setErrorMessage("");
+
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        throw new Error(data.error || "Something went wrong. Please try again.");
+      }
+
+      setStatus("sent");
+      setForm({ name: "", email: "", message: "" });
+      setTimeout(() => setStatus("idle"), 4000);
+    } catch (err) {
+      setErrorMessage(err instanceof Error ? err.message : "Something went wrong. Please try again.");
+      setStatus("error");
+    }
   };
 
   return (
@@ -44,6 +64,34 @@ export function Contact() {
           align="center"
         />
 
+        <Reveal>
+          <div className="glass-raised relative mb-10 overflow-hidden rounded-[2rem] px-8 py-12 text-center sm:py-14">
+            <div
+              aria-hidden
+              className="pointer-events-none absolute left-1/2 top-0 h-64 w-[36rem] -translate-x-1/2 -translate-y-1/2 rounded-full blur-3xl opacity-50"
+              style={{ background: "var(--gradient-glow)" }}
+            />
+            <p className="relative font-display text-3xl font-medium leading-tight text-ink sm:text-4xl">
+              Let&apos;s build something{" "}
+              <span className="text-gradient italic">amazing.</span>
+            </p>
+            <motion.button
+              type="button"
+              onClick={openChat}
+              whileHover={{ y: -3 }}
+              whileTap={{ scale: 0.97 }}
+              className="relative mt-8 inline-flex items-center gap-2 rounded-full px-8 py-4 text-sm font-semibold text-black shadow-[0_16px_40px_-10px_rgba(124,108,240,0.55)] transition-shadow hover:shadow-[0_20px_50px_-8px_rgba(124,108,240,0.7)] cursor-pointer"
+              style={{ background: "var(--gradient-primary)" }}
+            >
+              <MessageCircle size={16} />
+              Start a Conversation
+            </motion.button>
+            <p className="relative mt-3 text-xs text-ink-faint">
+              Opens a quick chat — ask about skills, projects, or just say hi.
+            </p>
+          </div>
+        </Reveal>
+
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[0.85fr_1.15fr]">
           {/* Info column */}
           <Reveal>
@@ -53,7 +101,7 @@ export function Contact() {
                 const content = (
                   <div className="glass group flex items-center gap-4 rounded-2xl p-5 transition-all duration-300 hover:-translate-y-0.5">
                     <span
-                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-white"
+                      className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl text-black"
                       style={{ background: "var(--gradient-primary)" }}
                     >
                       <Icon size={18} />
@@ -145,13 +193,18 @@ export function Contact() {
 
               <motion.button
                 type="submit"
+                disabled={status === "sending"}
                 whileTap={{ scale: 0.97 }}
-                className="relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5 sm:w-auto cursor-pointer"
+                className="relative mt-6 inline-flex w-full items-center justify-center gap-2 rounded-full px-6 py-3.5 text-sm font-semibold text-black transition-transform hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:translate-y-0 sm:w-auto cursor-pointer"
                 style={{ background: "var(--gradient-primary)" }}
               >
-                {sent ? (
+                {status === "sending" ? (
                   <>
-                    <CheckCircle2 size={16} /> Opening your mail app...
+                    <Loader2 size={16} className="animate-spin" /> Sending...
+                  </>
+                ) : status === "sent" ? (
+                  <>
+                    <CheckCircle2 size={16} /> Message sent!
                   </>
                 ) : (
                   <>
@@ -159,6 +212,13 @@ export function Contact() {
                   </>
                 )}
               </motion.button>
+
+              {status === "error" && (
+                <p className="relative mt-3 flex items-center gap-1.5 text-sm text-blush-deep">
+                  <AlertCircle size={14} />
+                  {errorMessage}
+                </p>
+              )}
             </form>
           </Reveal>
         </div>

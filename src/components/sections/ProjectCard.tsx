@@ -1,161 +1,110 @@
-import { ArrowUpRight, CheckCircle2, Puzzle } from "lucide-react";
+"use client";
+
+import { motion } from "framer-motion";
+import { ArrowUpRight } from "lucide-react";
 import type { Project } from "@/data/portfolio";
 import { TiltCard } from "@/components/ui/TiltCard";
-import { Reveal } from "@/components/ui/Reveal";
 import { GithubIcon } from "@/components/ui/icons";
-
-function initials(name: string) {
-  return name
-    .split(" ")
-    .filter((w) => /^[A-Za-z]/.test(w))
-    .slice(0, 2)
-    .map((w) => w[0])
-    .join("")
-    .toUpperCase();
-}
+import { ProjectIllustration } from "./ProjectIllustration";
 
 export function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const reversed = index % 2 === 1;
-
   return (
-    <Reveal>
-      <div
-        className={`group grid grid-cols-1 items-stretch gap-6 lg:grid-cols-2 lg:gap-10 ${
-          reversed ? "lg:[&>*:first-child]:order-2" : ""
-        }`}
-      >
-        {/* Visual placeholder panel */}
-        <TiltCard className="group">
-          <div className="glass relative flex h-64 w-full items-center justify-center overflow-hidden rounded-[2rem] sm:h-80 lg:h-full">
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-80"
-              style={{ background: "var(--gradient-primary)", filter: "saturate(0.85)" }}
-            />
-            <div aria-hidden className="absolute inset-0 bg-noise opacity-30" />
-            <div
-              aria-hidden
-              className="absolute -bottom-10 -left-10 h-40 w-40 rounded-full bg-white/20 blur-2xl"
-            />
-            <div
-              aria-hidden
-              className="absolute -right-10 -top-10 h-40 w-40 rounded-full bg-white/10 blur-2xl"
-            />
-            <span className="relative font-display text-6xl font-medium text-white/95 drop-shadow-sm sm:text-7xl">
-              {initials(project.name)}
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: (index % 3) * 0.06 }}
+    >
+      <TiltCard className="group h-full">
+        <div className="glass relative flex h-full flex-col overflow-hidden rounded-[1.75rem] transition-shadow duration-500 hover:shadow-[0_30px_70px_-24px_rgba(124,108,240,0.5)]">
+          {/* Preview panel */}
+          <div className="relative h-44 w-full overflow-hidden bg-[#0c0a16]">
+            <div className="absolute inset-0 transition-transform duration-700 ease-out group-hover:scale-[1.06]">
+              <ProjectIllustration slug={project.slug} />
+            </div>
+            <span
+              className={`absolute right-3.5 top-3.5 inline-flex items-center gap-1.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-semibold uppercase tracking-wide text-white/95 backdrop-blur-sm`}
+            >
+              <span
+                className={`h-1.5 w-1.5 rounded-full ${
+                  project.status === "Live" ? "bg-emerald-400" : "bg-white/60"
+                }`}
+              />
+              {project.status}
             </span>
-            <span className="absolute bottom-5 left-5 rounded-full bg-black/20 px-3 py-1 text-[11px] font-medium uppercase tracking-wide text-white/90 backdrop-blur-sm">
+            <span className="absolute bottom-3.5 left-3.5 rounded-full bg-black/30 px-3 py-1 text-[10px] font-medium uppercase tracking-wide text-white/90 backdrop-blur-sm">
               {project.category}
             </span>
           </div>
-        </TiltCard>
 
-        {/* Details */}
-        <div className="flex flex-col justify-center">
-          <div className="mb-3 flex flex-wrap items-center gap-3">
-            <span className="text-xs font-semibold uppercase tracking-[0.15em] text-ink-faint">
-              0{index + 1}
-            </span>
+          {/* Content */}
+          <div className="flex flex-1 flex-col p-6">
             <span
-              className={`rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
+              className={`mb-2 w-fit rounded-full px-2.5 py-0.5 text-[10px] font-semibold uppercase tracking-wide ${
                 project.type === "Enterprise Project"
-                  ? "bg-purple/10 text-purple"
+                  ? "bg-purple/15 text-lavender-deep"
                   : "bg-rosegold/15 text-rosegold-deep"
               }`}
             >
               {project.type}
             </span>
-            <span
-              className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide ${
-                project.status === "Live"
-                  ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                  : "bg-ink-faint/10 text-ink-faint"
-              }`}
-            >
-              <span
-                className={`h-1.5 w-1.5 rounded-full ${
-                  project.status === "Live" ? "bg-emerald-500" : "bg-ink-faint"
-                }`}
-              />
-              {project.status}
-            </span>
-          </div>
+            <h3 className="font-display text-xl font-medium text-ink">{project.name}</h3>
+            <p className="mt-2.5 flex-1 text-sm leading-relaxed text-ink-soft">
+              {project.description}
+            </p>
 
-          <h3 className="font-display text-2xl font-medium text-ink sm:text-3xl">
-            {project.name}
-          </h3>
-          <p className="mt-3 text-base leading-relaxed text-ink-soft">
-            {project.longDescription}
-          </p>
-
-          <div className="mt-5 flex flex-wrap gap-2">
-            {project.tech.map((t) => (
-              <span
-                key={t}
-                className="rounded-full border border-lavender/25 bg-lavender/5 px-3 py-1 text-xs font-medium text-ink-soft"
-              >
-                {t}
-              </span>
-            ))}
-          </div>
-
-          <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2">
-            <div>
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-lavender-deep">
-                <CheckCircle2 size={13} /> Key Features
-              </p>
-              <ul className="space-y-1.5">
-                {project.features.map((f) => (
-                  <li key={f} className="text-sm leading-snug text-ink-soft">
-                    {f}
-                  </li>
-                ))}
-              </ul>
+            <div className="mt-4 flex flex-wrap gap-1.5">
+              {project.tech.slice(0, 4).map((t) => (
+                <span
+                  key={t}
+                  className="rounded-full border border-lavender/20 bg-lavender/5 px-2.5 py-1 text-[11px] font-medium text-ink-soft transition-colors duration-300 group-hover:border-lavender/35 group-hover:text-lavender-deep"
+                >
+                  {t}
+                </span>
+              ))}
+              {project.tech.length > 4 && (
+                <span className="rounded-full px-2.5 py-1 text-[11px] font-medium text-ink-faint">
+                  +{project.tech.length - 4}
+                </span>
+              )}
             </div>
-            <div>
-              <p className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wide text-rosegold-deep">
-                <Puzzle size={13} /> Challenges Solved
-              </p>
-              <ul className="space-y-1.5">
-                {project.challenges.map((c) => (
-                  <li key={c} className="text-sm leading-snug text-ink-soft">
-                    {c}
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
 
-          <div className="mt-7 flex flex-wrap gap-3">
-            {project.liveUrl && (
-              <a
-                href={project.liveUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="group/link inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-white transition-transform hover:-translate-y-0.5"
-                style={{ background: "var(--gradient-primary)" }}
-              >
-                Live Demo
-                <ArrowUpRight
-                  size={14}
-                  className="transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
-                />
-              </a>
-            )}
-            {project.githubUrl && (
-              <a
-                href={project.githubUrl}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="glass inline-flex items-center gap-1.5 rounded-full px-5 py-2.5 text-sm font-semibold text-ink transition-transform hover:-translate-y-0.5 hover:text-lavender-deep"
-              >
-                <GithubIcon size={14} />
-                GitHub
-              </a>
-            )}
+            <div className="mt-6 flex flex-wrap gap-2.5 border-t border-white/10 pt-5">
+              {project.liveUrl && (
+                <a
+                  href={project.liveUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="group/link inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-black transition-transform hover:-translate-y-0.5"
+                  style={{ background: "var(--gradient-primary)" }}
+                >
+                  Live Demo
+                  <ArrowUpRight
+                    size={13}
+                    className="transition-transform group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                  />
+                </a>
+              )}
+              {project.githubUrl && (
+                <a
+                  href={project.githubUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="glass inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-xs font-semibold text-ink transition-transform hover:-translate-y-0.5 hover:text-lavender-deep"
+                >
+                  <GithubIcon size={13} />
+                  GitHub
+                </a>
+              )}
+              {!project.liveUrl && !project.githubUrl && (
+                <span className="text-xs font-medium text-ink-faint">
+                  Private / Enterprise codebase
+                </span>
+              )}
+            </div>
           </div>
         </div>
-      </div>
-    </Reveal>
+      </TiltCard>
+    </motion.div>
   );
 }

@@ -36,6 +36,10 @@ yarn-error.log*
 # vercel
 .vercel
 
+# guestbook / doodle-wall runtime data
+/data/guestbook.json
+/data/doodles.json
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

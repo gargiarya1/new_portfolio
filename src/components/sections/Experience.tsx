@@ -39,6 +39,9 @@ export function Experience() {
                       <p className="mb-4 text-sm text-ink-faint">
                         {item.org} — {item.location}
                       </p>
+                      <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-ink-faint">
+                        Key Contributions
+                      </p>
                       <ul className="space-y-2">
                         {item.bullets.map((bullet) => (
                           <li
@@ -50,6 +53,16 @@ export function Experience() {
                           </li>
                         ))}
                       </ul>
+                      <div className="mt-5 flex flex-wrap gap-2 border-t border-white/10 pt-4">
+                        {item.tech.map((t) => (
+                          <span
+                            key={t}
+                            className="rounded-full border border-lavender/25 bg-lavender/5 px-3 py-1 text-xs font-medium text-ink-soft"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 </Reveal>

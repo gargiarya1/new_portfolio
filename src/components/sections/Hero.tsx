@@ -2,16 +2,22 @@
 
 import dynamic from "next/dynamic";
 import { motion } from "framer-motion";
-import { ArrowUpRight, ArrowDown, Sparkles } from "lucide-react";
+import { ArrowUpRight, ArrowDown, Sparkles, Eye, Download } from "lucide-react";
 import { profile } from "@/data/portfolio";
 import { RoleCycler } from "@/components/ui/RoleCycler";
 import { Button } from "@/components/ui/Button";
+import { ProfileCard3D } from "@/components/sections/ProfileCard3D";
+import { useResumeModal } from "@/lib/resume-modal-context";
+import { useMediaQuery } from "@/lib/hooks";
 
 const HeroScene = dynamic(() => import("@/components/three/HeroScene"), {
   ssr: false,
 });
 
 export function Hero() {
+  const { open } = useResumeModal();
+  const showScene = useMediaQuery("(min-width: 640px)");
+
   return (
     <section
       id="home"
@@ -69,7 +75,7 @@ export function Hero() {
             className="mt-10 flex flex-wrap items-center gap-4"
           >
             <Button href="#projects" icon={<ArrowUpRight size={16} />}>
-              View Projects
+              View My Work
             </Button>
             <Button href="#contact" variant="ghost">
               Contact Me
@@ -77,10 +83,35 @@ export function Hero() {
           </motion.div>
 
           <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.42 }}
+            className="mt-4 flex flex-wrap items-center gap-3"
+          >
+            <button
+              type="button"
+              onClick={open}
+              className="group inline-flex cursor-pointer items-center gap-2 rounded-full glass px-5 py-2.5 text-sm font-semibold text-ink-soft transition-all hover:-translate-y-0.5 hover:text-ink"
+            >
+              <Eye size={15} />
+              View Resume
+            </button>
+            <a
+              href={profile.resumeUrl}
+              download
+              className="group inline-flex items-center gap-2 rounded-full px-5 py-2.5 text-sm font-semibold text-black shadow-[0_10px_30px_-8px_rgba(219,162,79,0.55)] transition-all hover:-translate-y-0.5 hover:shadow-[0_14px_36px_-6px_rgba(219,162,79,0.65)]"
+              style={{ background: "var(--gradient-gold)" }}
+            >
+              <Download size={15} className="transition-transform group-hover:translate-y-0.5" />
+              Download Resume
+            </a>
+          </motion.div>
+
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ duration: 0.7, delay: 0.5 }}
-            className="mt-14 flex items-center gap-6 text-xs uppercase tracking-[0.15em] text-ink-faint"
+            transition={{ duration: 0.7, delay: 0.55 }}
+            className="mt-12 flex items-center gap-6 text-xs uppercase tracking-[0.15em] text-ink-faint"
           >
             <span>{profile.location}</span>
             <span className="h-px w-8 bg-current opacity-30" />
@@ -88,28 +119,19 @@ export function Hero() {
           </motion.div>
         </div>
 
-        {/* 3D scene + avatar */}
+        {/* 3D profile card */}
         <motion.div
           initial={{ opacity: 0, scale: 0.92 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.9, delay: 0.2 }}
-          className="relative mx-auto h-[380px] w-full max-w-md sm:h-[460px] lg:h-[520px]"
+          className="relative"
         >
-          <div className="absolute inset-0">
-            <HeroScene />
-          </div>
-
-          {/* Monogram avatar badge, floats above the 3D scene */}
-          <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-            <div
-              className="animate-float flex h-32 w-32 items-center justify-center rounded-[2rem] glass shadow-[0_20px_60px_-15px_rgba(139,111,179,0.5)] sm:h-40 sm:w-40"
-              style={{ transform: "translateZ(0)" }}
-            >
-              <span className="font-display text-4xl font-medium text-gradient sm:text-5xl">
-                GA
-              </span>
+          {showScene && (
+            <div className="pointer-events-none absolute inset-0 -z-10 scale-125 opacity-70">
+              <HeroScene />
             </div>
-          </div>
+          )}
+          <ProfileCard3D />
         </motion.div>
       </div>
 

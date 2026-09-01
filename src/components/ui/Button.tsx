@@ -24,7 +24,7 @@ export function Button({
 
   const styles =
     variant === "primary"
-      ? "text-white shadow-[0_8px_30px_-8px_rgba(139,111,179,0.55)] hover:shadow-[0_12px_40px_-6px_rgba(139,111,179,0.65)] hover:-translate-y-0.5"
+      ? "text-black shadow-[0_8px_30px_-8px_rgba(124,108,240,0.55)] hover:shadow-[0_12px_40px_-6px_rgba(124,108,240,0.65)] hover:-translate-y-0.5"
       : "glass text-ink hover:text-lavender-deep hover:-translate-y-0.5";
 
   return (

@@ -1,85 +1,49 @@
 @import "tailwindcss";
 
 :root {
-  /* Light theme — cream, blush, lavender, rose gold */
-  --color-base: #fdf9f6;
-  --color-base-deep: #f8f0ec;
-  --color-surface: 255 255 255;
-  --color-surface-alpha: 0.6;
-  --color-ink: #2b2033;
-  --color-ink-soft: #6b5b73;
-  --color-ink-faint: #9c8ea6;
-  --color-border: 155 123 175;
-  --color-border-alpha: 0.14;
-
-  --color-lavender: #b9a6e0;
-  --color-lavender-deep: #8f74c4;
-  --color-blush: #f0bfd1;
-  --color-blush-deep: #e191ac;
-  --color-rosegold: #d9a99b;
-  --color-rosegold-deep: #c17f6c;
-  --color-purple: #8b6fb3;
-
-  --gradient-primary: linear-gradient(135deg, #b9a6e0 0%, #f0bfd1 50%, #d9a99b 100%);
-  --gradient-glow: radial-gradient(circle, rgba(185, 166, 224, 0.35) 0%, rgba(240, 191, 209, 0) 70%);
-
-  color-scheme: light;
-}
-
-:root[data-theme="dark"] {
-  --color-base: #130d1b;
-  --color-base-deep: #0d0813;
+  /* Dark-first premium palette — deep space base, violet / rose / gold accents */
+  --color-base: #07060c;
+  --color-base-deep: #0c0a16;
+  --color-base-raise: #12101f;
   --color-surface: 255 255 255;
   --color-surface-alpha: 0.045;
-  --color-ink: #f5eefb;
-  --color-ink-soft: #c3b3d4;
-  --color-ink-faint: #8a7a99;
-  --color-border: 201 182 228;
-  --color-border-alpha: 0.14;
+  --color-ink: #f6f4fb;
+  --color-ink-soft: #b6b0c9;
+  --color-ink-faint: #7c7690;
+  --color-border: 255 255 255;
+  --color-border-alpha: 0.09;
 
-  --color-lavender: #c9b6e4;
-  --color-lavender-deep: #a68bd6;
-  --color-blush: #f0a8c4;
-  --color-blush-deep: #e885ab;
-  --color-rosegold: #e0b4a6;
-  --color-rosegold-deep: #d99a86;
-  --color-purple: #b39ddb;
+  --color-lavender: #9b8cf9;
+  --color-lavender-deep: #7c6cf0;
+  --color-blush: #f0a8c8;
+  --color-blush-deep: #e37fae;
+  --color-rosegold: #f0c27a;
+  --color-rosegold-deep: #dba24f;
+  --color-purple: #7c6cf0;
+  --color-cyan: #67e8d0;
 
-  --gradient-primary: linear-gradient(135deg, #c9b6e4 0%, #f0a8c4 50%, #e0b4a6 100%);
-  --gradient-glow: radial-gradient(circle, rgba(201, 182, 228, 0.25) 0%, rgba(201, 182, 228, 0) 70%);
+  /* Composed from the color vars above (not literal values) so a runtime
+     palette swap — see ThemePicker — updates every gradient automatically. */
+  --gradient-primary: linear-gradient(135deg, var(--color-lavender) 0%, var(--color-blush) 55%, var(--color-rosegold) 100%);
+  --gradient-gold: linear-gradient(135deg, var(--color-rosegold) 0%, var(--color-rosegold-deep) 100%);
+  --gradient-glow: radial-gradient(circle, color-mix(in srgb, var(--color-lavender) 32%, transparent) 0%, transparent 70%);
 
   color-scheme: dark;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
-    --color-base: #130d1b;
-    --color-base-deep: #0d0813;
-    --color-surface: 255 255 255;
-    --color-surface-alpha: 0.045;
-    --color-ink: #f5eefb;
-    --color-ink-soft: #c3b3d4;
-    --color-ink-faint: #8a7a99;
-    --color-border: 201 182 228;
-    --color-border-alpha: 0.14;
-
-    --color-lavender: #c9b6e4;
-    --color-lavender-deep: #a68bd6;
-    --color-blush: #f0a8c4;
-    --color-blush-deep: #e885ab;
-    --color-rosegold: #e0b4a6;
-    --color-rosegold-deep: #d99a86;
-    --color-purple: #b39ddb;
-
-    --gradient-primary: linear-gradient(135deg, #c9b6e4 0%, #f0a8c4 50%, #e0b4a6 100%);
-    --gradient-glow: radial-gradient(circle, rgba(201, 182, 228, 0.25) 0%, rgba(201, 182, 228, 0) 70%);
-    color-scheme: dark;
-  }
+/* Smooth (but snappy) transition when the palette changes at runtime.
+   Gradients themselves can't be interpolated by CSS, but solid
+   background/border/text colors that reference the palette vars will
+   fade instead of snapping. */
+body, .glass, .glass-raised, .text-gradient, .text-gradient-gold,
+button, a, span, svg {
+  transition: background-color 0.4s ease, border-color 0.4s ease, color 0.4s ease, fill 0.4s ease;
 }
 
 @theme inline {
   --color-base: var(--color-base);
   --color-base-deep: var(--color-base-deep);
+  --color-base-raise: var(--color-base-raise);
   --color-ink: var(--color-ink);
   --color-ink-soft: var(--color-ink-soft);
   --color-ink-faint: var(--color-ink-faint);
@@ -90,14 +54,20 @@
   --color-rosegold: var(--color-rosegold);
   --color-rosegold-deep: var(--color-rosegold-deep);
   --color-purple: var(--color-purple);
+  --color-cyan: var(--color-cyan);
 
   --font-display: var(--font-fraunces);
   --font-sans: var(--font-jakarta);
 
   --animate-float: float 6s ease-in-out infinite;
   --animate-float-slow: float 9s ease-in-out infinite;
+  --animate-float-slower: float 12s ease-in-out infinite;
   --animate-glow: glow 4s ease-in-out infinite;
   --animate-marquee: marquee 28s linear infinite;
+  --animate-spin-slow: spin 22s linear infinite;
+  --animate-pulse-dot: pulse-dot 2.2s ease-in-out infinite;
+  --animate-jiggle: jiggle 2.6s ease-in-out infinite;
+  --animate-chip-bounce: chip-bounce 1.7s ease-in-out infinite;
 }
 
 @keyframes float {
@@ -115,6 +85,30 @@
   to { transform: translateX(-50%); }
 }
 
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@keyframes pulse-dot {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(103, 232, 208, 0.55); }
+  70% { box-shadow: 0 0 0 8px rgba(103, 232, 208, 0); }
+}
+
+@keyframes jiggle {
+  0%, 100% { transform: translateZ(20px) rotate(0deg) scale(1); }
+  15% { transform: translateZ(20px) rotate(-7deg) scale(1.06); }
+  30% { transform: translateZ(20px) rotate(6deg) scale(0.96); }
+  45% { transform: translateZ(20px) rotate(-4deg) scale(1.04); }
+  60% { transform: translateZ(20px) rotate(3deg) scale(0.99); }
+  75% { transform: translateZ(20px) rotate(-2deg) scale(1.01); }
+}
+
+@keyframes chip-bounce {
+  0%, 100% { transform: scale(1) translateY(0); }
+  50% { transform: scale(1.15) translateY(-3px); }
+}
+
 * {
   border-color: rgb(var(--color-border) / var(--color-border-alpha));
 }
@@ -127,11 +121,10 @@ body {
   background: var(--color-base);
   color: var(--color-ink);
   font-family: var(--font-sans), sans-serif;
-  transition: background-color 0.4s ease, color 0.4s ease;
 }
 
 ::selection {
-  background: rgb(var(--color-border) / 0.35);
+  background: rgb(155 140 249 / 0.35);
   color: var(--color-ink);
 }
 
@@ -153,8 +146,26 @@ body {
   border: 1px solid rgb(var(--color-border) / var(--color-border-alpha));
 }
 
+.glass-raised {
+  background: linear-gradient(
+    160deg,
+    rgb(var(--color-surface) / 0.08),
+    rgb(var(--color-surface) / 0.02)
+  );
+  -webkit-backdrop-filter: blur(22px) saturate(160%);
+  backdrop-filter: blur(22px) saturate(160%);
+  border: 1px solid rgb(var(--color-border) / 0.12);
+}
+
 .text-gradient {
   background: var(--gradient-primary);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.text-gradient-gold {
+  background: var(--gradient-gold);
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -163,6 +174,13 @@ body {
 .bg-noise {
   background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
   mix-blend-mode: overlay;
+}
+
+.bg-grid {
+  background-image:
+    linear-gradient(rgb(var(--color-border) / 0.5) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(var(--color-border) / 0.5) 1px, transparent 1px);
+  background-size: 64px 64px;
 }
 
 @media (prefers-reduced-motion: reduce) {

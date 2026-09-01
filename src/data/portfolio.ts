@@ -23,7 +23,80 @@ export const profile = {
     "Outside of enterprise work, I build things that matter to me personally too — a safety app for women, a learning platform for students — because the best way to grow as a developer is to keep shipping.",
   ],
   resumeUrl: "/Gargi_Arya_Resume.pdf",
+  resumeUpdated: "August 2026",
 };
+
+export type AboutCard = {
+  icon: "sparkles" | "graduation" | "code" | "compass" | "target";
+  /** small chapter label, e.g. "Prologue", "Chapter One" */
+  chapter: string;
+  title: string;
+  /** short italic intro line under the title */
+  intro: string;
+  /** main body paragraph */
+  body: string;
+  /** optional pull-quote rendered as a highlighted line */
+  quote?: string;
+  /** illustration for the About storybook — see public/illustrations/about/ */
+  image: string;
+  /** deep, editorial-toned accent — tuned for the warm parchment page, not the site's live dark palette */
+  accent: string;
+};
+
+export const aboutCards: AboutCard[] = [
+  {
+    icon: "sparkles",
+    chapter: "Prologue",
+    title: "Who I Am",
+    intro: "Where the story starts.",
+    body:
+      "A software developer who believes the best products disappear into the background and just work, beautifully. Currently building AI systems and enterprise platforms at Code Cafe Lab IT Solutions, Jaipur.",
+    quote: "The best products disappear into the background — they just work, beautifully.",
+    image: "/illustrations/about/who-i-am.png",
+    accent: "#6d28d9",
+  },
+  {
+    icon: "graduation",
+    chapter: "Chapter One",
+    title: "Education",
+    intro: "Where the foundation was laid.",
+    body:
+      "B.Tech in Computer Science and Engineering, University of Engineering and Management, Jaipur (2021–2025) — graduated with a CGPA of 8.9.",
+    image: "/illustrations/about/education.svg",
+    accent: "#0f766e",
+  },
+  {
+    icon: "code",
+    chapter: "Chapter Two",
+    title: "Development Experience",
+    intro: "Where the building happens.",
+    body:
+      "Full SDLC ownership across ERP/CRM platforms, Agentic AI calling systems, and conversational automation — from a client's first requirement to production support.",
+    image: "/illustrations/about/development.svg",
+    accent: "#5b21b6",
+  },
+  {
+    icon: "compass",
+    chapter: "Chapter Three",
+    title: "Areas of Interest",
+    intro: "Where curiosity leads.",
+    body:
+      "Agentic AI and conversational systems, enterprise workflow automation, clean API design, and building tools that quietly save people hours every week.",
+    image: "/illustrations/about/interests.svg",
+    accent: "#b45309",
+  },
+  {
+    icon: "target",
+    chapter: "Epilogue",
+    title: "Career Goals",
+    intro: "Where it's headed next.",
+    body:
+      "Keep going deeper into AI-powered, production-grade software — systems that hold real conversations and run real businesses end-to-end, not just demos.",
+    quote: "Systems that hold real conversations, not just demos.",
+    image: "/illustrations/about/goals.svg",
+    accent: "#9d174d",
+  },
+];
 
 export const stats = [
   { label: "Projects Delivered", value: 6, suffix: "+" },
@@ -261,6 +334,7 @@ export type ExperienceItem = {
   org: string;
   location: string;
   period: string;
+  tech: string[];
   bullets: string[];
 };
 
@@ -270,6 +344,7 @@ export const experience: ExperienceItem[] = [
     org: "Code Cafe Lab IT Solutions",
     location: "Jaipur, India",
     period: "June 2025 — Present",
+    tech: ["React.js", "Node.js", "MySQL", "Python", "Agentic AI", "WhatsApp API", "REST APIs"],
     bullets: [
       "Developed ERP and CRM-based business management systems using React.js, Node.js, MySQL, and Python scripts.",
       "Implemented modules for lead management, incentive generation, identity and access management (IAM), workflow automation, and reporting dashboards for enterprise-grade ERP applications.",
@@ -284,6 +359,7 @@ export const experience: ExperienceItem[] = [
     org: "CodeSpaze",
     location: "Jaipur, India",
     period: "Oct 2023 — Nov 2023",
+    tech: ["HTML5", "CSS3", "JavaScript", "React.js"],
     bullets: [
       "Built and optimized responsive web applications using HTML, CSS, JavaScript, and React.js.",
       "Improved UI/UX through interactive components and API integrations.",
